@@ -29,6 +29,16 @@ class Patient
     patient.save
   end
 
+  def Patient.find(type, user_input)
+    results = DB.exec("SELECT * FROM patient INNER JOIN doctor on
+      patient.doctor_id = doctor.id WHERE #{type} LIKE '#{user_input}%';")
+    found = []
+    results.each do |result|
+        found << result
+      end
+    found
+  end
+
   def delete
     DB.exec("DELETE FROM patient WHERE id = #{id};")
   end
@@ -41,8 +51,13 @@ class Patient
     DB.exec("INSERT INTO patient (name, birthday, doctor_id) VALUES ('#{@name}', '#{@birthday}', #{@doctor_id});")
   end
 
-  def doctor_name
-    results = DB.exec("SELECT name FROM doctor WHERE id = #{@doctor_id};")
-    results[0]['name']
+  def doctor_name_method
+    results = DB.exec("SELECT doctor_name FROM doctor WHERE id = #{@doctor_id};")
+    results[0]['doctor_name']
+  end
+
+  def doctor_specialty
+    results = DB.exec("SELECT specialty FROM doctor WHERE id = #{@doctor_id};")
+    results[0]['specialty']
   end
 end

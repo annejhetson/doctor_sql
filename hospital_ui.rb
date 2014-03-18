@@ -19,8 +19,6 @@ system('clear')
     doctor_menu
   when 'p'
     patient_menu
-  when 'f'
-    find_menu
   when 'x'
     puts "Now, let's go party! ┏(-_-)┛┗(-_-﻿ )┓┗(-_-)┛┏(-_-)┓"
   else
@@ -37,6 +35,7 @@ def patient_menu
   puts "+  D - Delete a patient             +"
   puts "+  M - Modify a patient             +"
   puts "+  L - List menu                    +"
+  puts "+  O - Go to doctor menu            +"
   puts "+  X - Exit                         +"
   puts "====================================="
 
@@ -55,6 +54,8 @@ def patient_menu
     modify_patient
   when 'l'
     list_patient_menu
+  when 'o'
+    doctor_menu
   else
     puts "NOT A VALID INPUT!!! >__<"
     patient_menu
@@ -64,14 +65,14 @@ end
 def add_patient
   list_all_doctors
   puts "Enter new patient's name"
-  patient_name = gets.chomp
+  patient_name = gets.downcase.chomp
   puts "Enter #{patient_name}'s birthday"
   bday = gets.chomp
   puts "Enter #{patient_name}'s doctor's number"
   patient_doctor = gets.chomp.to_i
 
   user_doctor_id = Doctor.all[patient_doctor-1].id
-  p user_doctor_id
+
   Patient.create({:name => patient_name, :birthday => bday, :doctor_id => user_doctor_id})
   puts "Patient #{Patient.all.last.name} has been added to our 'poopie' hospital database."
   puts "Enter 'A' to add another patient."
@@ -108,7 +109,7 @@ def list_patient_menu
   list_all_patients
   puts "Press Return to return to main menu"
   gets
-  doctor_menu
+  patient_menu
 end
 
 def modify_patient
@@ -131,7 +132,7 @@ def modify_patient
       puts "May I suggest a mental hospital? Poopie head!!!"
     end
   puts "what do you want to modify to"
-  modify_to = gets.chomp
+  modify_to = gets.downcase.chomp
     if choice == 3
     modify_to = Doctor.all[(modify_to).to_i - 1].id
     end
@@ -143,6 +144,27 @@ def modify_patient
   patient_menu
 end
 
+def find_patient
+  user_input_key = {'1' => 'patient.birthday', '2' => 'patient.name', '3' => 'doctor.doctor_name', '4' => 'doctor.specialty'}
+  puts "Enter '1' to search by birthday"
+  puts "Enter '2' to search by name"
+  puts "Enter '3' to search by doctor name"
+  puts "Enter '4' to search by doctor specialty"
+  input = gets.chomp
+  puts "What are you looking for?"
+  what_to_find = gets.downcase.chomp
+
+  results = Patient.find(user_input_key[input], what_to_find)
+
+  results.each_with_index do |result, index|
+    puts "#{index + 1}: #{result['name'].capitalize} - #{result['birthday']} - #{result['doctor_name'].capitalize} - #{result['specialty'].capitalize}"
+  end
+  puts "Press enter to go back to main menu"
+  gets
+  main_menu
+end
+
+
 def doctor_menu
   system('clear')
   puts "WELCOME TO ANOTHER DAY OF BORING WORK"
@@ -152,6 +174,7 @@ def doctor_menu
   puts "+  D - Delete a doctor              +"
   puts "+  M - Modify a doctor              +"
   puts "+  L - List menu                    +"
+  puts "+  P - To Patient menu"
   puts "+  X - Exit                         +"
   puts "====================================="
 
@@ -162,12 +185,16 @@ def doctor_menu
     puts "Now, let's go party! ┏(-_-)┛┗(-_-﻿ )┓┗(-_-)┛┏(-_-)┓"
   when 'a'
     add_doctor
+  when 'f'
+    find_doctor
   when 'd'
     delete_doctor
   when 'm'
     modify_doctor
   when 'l'
     list_menu
+  when 'p'
+    patient_menu
   else
     puts "NOT A VALID INPUT!!! >__<"
     doctor_menu
@@ -176,9 +203,9 @@ end
 
 def add_doctor
   puts "Enter doctor's name"
-  doctor_name = gets.chomp
-  puts "Enter #{doctor_name}'s specialty"
-  specialty = gets.chomp
+  doctor_name = gets.downcase.chomp
+  puts "Enter #{doctor_name.capitalize}'s specialty"
+  specialty = gets.downcase.chomp
   Doctor.create({:name => doctor_name, :specialty => specialty})
   puts "Doctor #{Doctor.all.last.name} has been added to our 'poopie' hospital database."
   puts "Enter 'A' to add another doctor."
@@ -208,7 +235,7 @@ def delete_doctor
   list_all_doctors
   puts "Pick a doctor to destroy!! hahahahaha"
   number = gets.chomp.to_i
-  puts "Destroying doctor #{Doctor.all[number-1].name}..."
+  puts "Destroying doctor #{Doctor.all[number-1].name.capitalize}..."
   puts "Please stand by..."
   sleep(1)
   Doctor.all[number-1].delete
@@ -231,8 +258,8 @@ def modify_doctor
       puts "WRONG INPUT..Blah blah blah."
     end
   puts "What do you want to modify it to."
-  modified = gets.chomp
-  puts "Modifying doctor #{Doctor.all[index-1].name}..."
+  modified = gets.downcase.chomp
+  puts "Modifying doctor #{Doctor.all[index-1].name.capitalize}..."
   sleep(1)
   Doctor.all[index-1].modify_doctor(category, modified)
   puts "....MOD....I...FIED.....eh eh eh eh eh."
@@ -243,13 +270,13 @@ end
 
 def list_all_doctors
   Doctor.all.each_with_index do |doctor, index|
-    puts "#{index+1}: #{doctor.name} ☞ #{doctor.specialty}"
+    puts "#{index+1}: #{doctor.name.capitalize} ☞ #{doctor.specialty.capitalize}"
   end
 end
 
 def list_all_patients
   Patient.all.each_with_index do |patient, index|
-    puts "#{index+1}: #{patient.name} ☞ #{patient.doctor_name}"
+    puts "#{index+1}: #{patient.name.capitalize} ☞  #{patient.doctor_name.capitalize} ☞ #{patient.doctor_specialty.capitalize}"
   end
 end
 main_menu

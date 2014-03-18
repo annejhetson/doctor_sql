@@ -2,10 +2,10 @@ require 'pg'
 
 class Doctor
 
-attr_reader :name, :specialty, :id
+attr_reader :doctor_name, :specialty, :id
 
   def initialize(input_hash)
-    @name = input_hash[:name]
+    @doctor_name = input_hash[:doctor_name]
     @specialty = input_hash[:specialty]
     @id = input_hash[:id]
   end
@@ -14,10 +14,10 @@ attr_reader :name, :specialty, :id
     results = DB.exec("SELECT * FROM doctor;")
     doctors = []
     results.each do |result|
-      name = result['name']
+      doctor_name = result['doctor_name']
       specialty = result['specialty']
       id = result['id'].to_i
-      doctors << Doctor.new({:name => name, :specialty => specialty, :id => id})
+      doctors << Doctor.new({:doctor_name => doctor_name, :specialty => specialty, :id => id})
     end
     doctors
   end
@@ -36,7 +36,7 @@ attr_reader :name, :specialty, :id
   end
 
   def save
-    DB.exec("INSERT INTO doctor (name, specialty) VALUES ('#{@name}', '#{@specialty}');")
+    DB.exec("INSERT INTO doctor (doctor_name, specialty) VALUES ('#{@doctor_name}', '#{@specialty}');")
   end
 
 end

@@ -23,9 +23,15 @@ describe Patient do
   end
 
   it 'returns the doctor\'s name' do
-    test_doctor = Doctor.create({:name => "Anne", :specialty => "Butts"})
+    test_doctor = Doctor.create({:doctor_name => "Anne", :specialty => "Butts"})
     patient = Patient.create({:name => "Anne", :birthday => "07/31/1980", :doctor_id => "#{Doctor.all.last.id}"})
-    Patient.all[0].doctor_name.should eq Doctor.all.last.name
+    Patient.all[0].doctor_name_method.should eq Doctor.all.last.doctor_name
+  end
+
+  it 'returns the patient\'s type of doctor' do
+    test_doctor = Doctor.create({:doctor_name => "Anne", :specialty => "Butts"})
+    patient = Patient.create({:name => "Anne", :birthday => "07/31/1980", :doctor_id => "#{Doctor.all.last.id}"})
+    Patient.all[0].doctor_specialty.should eq Doctor.all.last.specialty
   end
 
   it 'deletes a patient' do
@@ -43,7 +49,20 @@ describe Patient do
   end
 
   it 'finds patients in the database' do
+    test_doctor = Doctor.create({:doctor_name => "Anne", :specialty => "Butts"})
     patient = Patient.create({:name => "Anne", :birthday => "07/31/1980", :doctor_id => "#{Doctor.all.last.id}"})
-    Patient.find('Anne')[0].name.should eq "Anne"
+    Patient.find('patient.name', 'Anne')[0]['name'].should eq "Anne"
+  end
+
+  it 'finds the patient if a doctor name is entered' do
+    test_doctor = Doctor.create({:doctor_name => "Anne", :specialty => "Butts"})
+    patient = Patient.create({:name => "Anne", :birthday => "07/31/1980", :doctor_id => "#{Doctor.all.last.id}"})
+    Patient.find("doctor.doctor_name", "Anne")[0]['specialty'].should eq "Butts"
+  end
+
+  it 'finds the patient if a doctor specialty is entered' do
+    test_doctor = Doctor.create({:name => "Anne", :specialty => "Butts"})
+    patient = Patient.create({:name => "Anne", :birthday => "07/31/1980", :doctor_id => "#{Doctor.all.last.id}"})
+    Patient.find("doctor.specialty", "Butts")[0]['name'].should eq "Anne"
   end
 end
