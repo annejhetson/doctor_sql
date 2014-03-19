@@ -145,11 +145,10 @@ def modify_patient
 end
 
 def find_patient
-  user_input_key = {'1' => 'patient.birthday', '2' => 'patient.name', '3' => 'doctor.doctor_name', '4' => 'doctor.specialty'}
-  puts "Enter '1' to search by birthday"
-  puts "Enter '2' to search by name"
-  puts "Enter '3' to search by doctor name"
-  puts "Enter '4' to search by doctor specialty"
+  user_input_key = {'1' => 'patient.name', '2' => 'doctor.doctor_name', '3' => 'doctor.specialty'}
+  puts "Enter '1' to search by name"
+  puts "Enter '2' to search by patient's doctor name"
+  puts "Enter '3' to search by patient's doctor specialty"
   input = gets.chomp
   puts "What are you looking for?"
   what_to_find = gets.downcase.chomp
@@ -157,7 +156,28 @@ def find_patient
   results = Patient.find(user_input_key[input], what_to_find)
 
   results.each_with_index do |result, index|
-    puts "#{index + 1}: #{result['name'].capitalize} - #{result['birthday']} - #{result['doctor_name'].capitalize} - #{result['specialty'].capitalize}"
+    puts "#{index + 1}: NAME: #{result['name'].capitalize} BIRTHDAY: #{result['birthday']}
+    DOCTOR: #{result['doctor_name'].capitalize} DOCTOR SPECIALTY: #{result['specialty'].capitalize}"
+  end
+  puts "Press enter to go back to main menu"
+  gets
+  main_menu
+end
+
+def find_doctor
+  user_input_key = {'1' => 'doctor.doctor_name', '2' => 'patient.name', '3' => 'doctor.doctor_specialty'}
+  puts "Enter '1' to search by name"
+  puts "Enter '2' to search by patient's name"
+  puts "Enter '3' to search by specialty"
+  input = gets.chomp
+  puts "What are you looking for?"
+  what_to_find = gets.downcase.chomp
+
+  results = Patient.find(user_input_key[input], what_to_find)
+
+  results.each_with_index do |result, index|
+    puts "#{index + 1}: DOCTOR: #{result['doctor_name'].capitalize} DOCTOR SPECIALTY: #{result['specialty'].capitalize}
+    PATIENT: #{result['name'].capitalize}"
   end
   puts "Press enter to go back to main menu"
   gets
